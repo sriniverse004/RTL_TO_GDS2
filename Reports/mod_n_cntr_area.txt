@@ -1,0 +1,30 @@
+ 
+****************************************
+Report : area
+Design : mod_n_cntr
+Version: T-2022.03-SP5
+Date   : Tue Aug 13 15:09:09 2024
+****************************************
+
+Library(s) Used:
+
+    sky130_fd_sc_hd__tt_025C_1v80 (File: /home/student/cadWorkDir/sky130RTLDesignAndSynthesisWorkshop-main/DC_WORKSHOP/lib/sky130_fd_sc_hd__tt_025C_1v80.db)
+
+Number of ports:                            7
+Number of nets:                            21
+Number of cells:                           17
+Number of combinational cells:             14
+Number of sequential cells:                 3
+Number of macros/black boxes:               0
+Number of buf/inv:                          6
+Number of references:                       9
+
+Combinational area:                 98.844799
+Buf/Inv area:                       48.796800
+Noncombinational area:              60.057598
+Macro/Black Box area:                0.000000
+Net Interconnect area:      undefined  (No wire load specified)
+
+Total cell area:                   158.902397
+Total area:                 undefined
+1
