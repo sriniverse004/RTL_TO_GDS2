@@ -1,0 +1,40 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : mod_n_cntr
+Version: T-2022.03-SP5
+Date   : Tue Aug 13 15:06:58 2024
+****************************************
+
+Operating Conditions: tt_025C_1v80   Library: sky130_fd_sc_hd__tt_025C_1v80
+Wire Load Model Mode: top
+
+  Startpoint: o_Q_reg[0] (rising edge-triggered flip-flop clocked by my_clk)
+  Endpoint: o_Q[0] (output port clocked by my_clk)
+  Path Group: my_clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock my_clk (rise edge)                                0.00       0.00
+  clock network delay (ideal)                             1.00       1.00
+  o_Q_reg[0]/CLK (sky130_fd_sc_hd__dfxtp_1)               0.00       1.00 r
+  o_Q_reg[0]/Q (sky130_fd_sc_hd__dfxtp_1)                 0.30       1.30 r
+  U56/Y (sky130_fd_sc_hd__clkinv_1)                       0.19       1.49 f
+  U48/Y (sky130_fd_sc_hd__inv_8)                          1.11       2.60 r
+  o_Q[0] (out)                                            0.00       2.60 r
+  data arrival time                                                  2.60
+
+  clock my_clk (rise edge)                                5.00       5.00
+  clock network delay (ideal)                             1.00       6.00
+  clock uncertainty                                      -0.10       5.90
+  output external delay                                  -0.50       5.40
+  data required time                                                 5.40
+  --------------------------------------------------------------------------
+  data required time                                                 5.40
+  data arrival time                                                 -2.60
+  --------------------------------------------------------------------------
+  slack (MET)                                                        2.80
