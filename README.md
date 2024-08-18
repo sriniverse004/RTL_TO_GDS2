@@ -53,22 +53,219 @@ Include a block diagram of the counter here (or refer to an image if available).
   - Counting down: Counter wraps to N-1 when reaching 0.
 - **Hold:** When `i_en` is deasserted, the counter holds its current value.
 - **Reset:** Asserts to reset the counter to 0 asynchronously, overriding all other signals.
+## State Diagram
+
+
+
 ## RTL Code:
+**RTL Code**
+```verilog
+module mod_n_cntr # (parameter N = 6,  
+     parameter WIDTH = 3)
+   (input i_clk,
+    input i_rst,
+    input i_en,
+    input i_up_down,
+    output reg[WIDTH-1:0] o_Q
+    );
+    
+always @ (posedge i_clk) begin  
+    if (i_rst) begin  
+      o_Q <= 0;  
+    end 
+    else begin  
+     if (i_en) begin
+      if (i_up_down) begin
+        if (o_Q == N-1)
+          o_Q<= 0;
+        o_Q <= o_Q + 1; 
+       end 
+      else begin  
+        if (o_Q == 0)
+          o_Q<= N-1;
+        o_Q <= o_Q - 1; 
+        end
+    end  
+    end
+end      
 
-[RTL Code](RTL/mod_n_cntr.v)
+endmodule
+```
+**Test Bench**
+```verilog
+module mod_n_cntr_tb#(parameter WIDTH=3 ) ();
 
+reg i_clk,i_rst,i_en,i_up_down;
+wire [WIDTH-1:0]o_Q;
+
+mod_n_cntr dut (.i_clk(i_clk),.i_rst(i_rst),.i_en(i_en),.i_up_down(i_up_down),.o_Q(o_Q));
+
+initial
+begin
+        i_clk=1'b0;
+        i_rst=1'b0;
+        i_en=1'b1;
+        i_up_down=1'b1;
+
+        #10
+          i_rst=1'b1;
+          i_en=1'b0;
+
+        #10
+          i_rst=1'b0;
+          i_en=1'b1;
+
+        #50
+          i_en=1'b0;
+          
+        
+        #20
+          i_up_down=1'b0;
+          i_en=1'b1;
+
+        #100
+          $finish;
+
+  end
+
+  initial
+    begin
+         $dumpfile("output.vcd");
+         $dumpvars(1);
+  end
+
+  always #5 i_clk = ~i_clk;
+
+endmodule
+```
+
+## Constraints:
+
+```sdc
+create_clock -name my_clk -period 5 [get_ports i_clk]
+
+set_clock_latency 1 my_clk
+
+set_clock_uncertainty 0.1 my_clk
+
+set_input_delay -max 0.5 -clock [get_clocks my_clk] [get_ports i_rst]
+set_input_delay -max 0.5 -clock [get_clocks my_clk] [get_ports i_en]
+set_input_delay -max 0.5 -clock [get_clocks my_clk] [get_ports i_up_down]
+
+set_input_delay -min 0.125 -clock [get_clocks my_clk] [get_ports i_rst]
+set_input_delay -min 0.125 -clock [get_clocks my_clk] [get_ports i_en]
+set_input_delay -min 0.125 -clock [get_clocks my_clk] [get_ports i_up_down]
+
+set_input_transition -max 0.1 [get_ports i_rst]
+set_input_transition -max 0.1 [get_ports i_en]
+set_input_transition -max 0.1 [get_ports i_up_down]
+
+set_input_transition -min 0.05 [get_ports i_rst]
+set_input_transition -min 0.05 [get_ports i_en]
+set_input_transition -min 0.05 [get_ports i_up_down]
+
+set_output_delay -max 0.5 -clock [get_clocks my_clk] [get_ports o_Q]
+set_output_delay -min 0.125 -clock [get_clocks my_clk] [get_ports o_Q]
+
+set_load -max 1 [get_ports o_Q];
+set_load -min 0.5 [get_ports o_Q];
+```
 
 ## Timing Diagram
 
 Provide a timing diagram illustrating the counter's behavior during different operations.
 ![Output Waveform](Images/mod_n_cntr_simulation.png)
 
-## State Diagram
-
- 
 
 ## Synthesis Results
 
+**Generated Block Diagram**
+![Output Waveform](Images/mod_n_cntr_synthesis.png)
+
+**Setup Time Analysis**
+```txt
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : mod_n_cntr
+Version: T-2022.03-SP5
+Date   : Tue Aug 13 15:06:58 2024
+****************************************
+
+Operating Conditions: tt_025C_1v80   Library: sky130_fd_sc_hd__tt_025C_1v80
+Wire Load Model Mode: top
+
+  Startpoint: o_Q_reg[0] (rising edge-triggered flip-flop clocked by my_clk)
+  Endpoint: o_Q[0] (output port clocked by my_clk)
+  Path Group: my_clk
+  Path Type: max
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock my_clk (rise edge)                                0.00       0.00
+  clock network delay (ideal)                             1.00       1.00
+  o_Q_reg[0]/CLK (sky130_fd_sc_hd__dfxtp_1)               0.00       1.00 r
+  o_Q_reg[0]/Q (sky130_fd_sc_hd__dfxtp_1)                 0.30       1.30 r
+  U56/Y (sky130_fd_sc_hd__clkinv_1)                       0.19       1.49 f
+  U48/Y (sky130_fd_sc_hd__inv_8)                          1.11       2.60 r
+  o_Q[0] (out)                                            0.00       2.60 r
+  data arrival time                                                  2.60
+
+  clock my_clk (rise edge)                                5.00       5.00
+  clock network delay (ideal)                             1.00       6.00
+  clock uncertainty                                      -0.10       5.90
+  output external delay                                  -0.50       5.40
+  data required time                                                 5.40
+  --------------------------------------------------------------------------
+  data required time                                                 5.40
+  data arrival time                                                 -2.60
+  --------------------------------------------------------------------------
+  slack (MET)                                                        2.80
+```
+**Hold Time Analysis**
+```txt
+****************************************
+Report : timing
+        -path full
+        -delay min
+        -max_paths 1
+Design : mod_n_cntr
+Version: T-2022.03-SP5
+Date   : Tue Aug 13 15:07:23 2024
+****************************************
+
+Operating Conditions: tt_025C_1v80   Library: sky130_fd_sc_hd__tt_025C_1v80
+Wire Load Model Mode: top
+
+  Startpoint: i_rst (input port clocked by my_clk)
+  Endpoint: o_Q_reg[1] (rising edge-triggered flip-flop clocked by my_clk)
+  Path Group: my_clk
+  Path Type: min
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock my_clk (rise edge)                                0.00       0.00
+  clock network delay (ideal)                             1.00       1.00
+  input external delay                                    0.12       1.12 r
+  i_rst (in)                                              0.00       1.12 r
+  U50/Y (sky130_fd_sc_hd__a211oi_1)                       0.04       1.17 f
+  o_Q_reg[1]/D (sky130_fd_sc_hd__dfxtp_1)                 0.00       1.17 f
+  data arrival time                                                  1.17
+
+  clock my_clk (rise edge)                                0.00       0.00
+  clock network delay (ideal)                             1.00       1.00
+  clock uncertainty                                       0.10       1.10
+  o_Q_reg[1]/CLK (sky130_fd_sc_hd__dfxtp_1)               0.00       1.10 r
+  library hold time                                      -0.06       1.04
+  data required time                                                 1.04
+  --------------------------------------------------------------------------
+  data required time                                                 1.04
+  data arrival time                                                 -1.17
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.12
+```
 
 ## Applications
 
