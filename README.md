@@ -55,7 +55,8 @@ Include a block diagram of the counter here (or refer to an image if available).
 - **Reset:** Asserts to reset the counter to 0 asynchronously, overriding all other signals.
 ## State Diagram
 
-
+**MOD_6**
+![Output Waveform](Images/State_Diagram_MOD_6.jpg)
 
 ## RTL Code:
 **RTL Code**
