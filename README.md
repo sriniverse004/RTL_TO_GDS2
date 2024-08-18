@@ -57,6 +57,7 @@ Include a block diagram of the counter here (or refer to an image if available).
 ## Timing Diagram
 
 Provide a timing diagram illustrating the counter's behavior during different operations.
+![Output Waveform](Images/mod_n_cntr_simulation.png)
 
 ## State Diagram
 
