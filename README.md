@@ -221,7 +221,9 @@ Wire Load Model Mode: top
   slack (MET)                                                        0.12
 ```
 [Area Report](Reports/mod_n_cntr_area.txt)
+
 [Power Report](Reports/mod_n_cntr_power.txt)
+
 [Netlist](Reports/mod_n_cntr_netlist.v)
 
 ## Applications
